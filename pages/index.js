@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Container, 
   Button, 
   CircularProgress, 
@@ -16,9 +17,7 @@ import { Container,
   colors,
   CssBaseline
 } from '@material-ui/core';
-import { createMuiTheme, makeStyles, StylesProvider, ThemeProvider } from '@material-ui/core/styles';
 import axios from 'axios';
-import Head from 'next/head';
 
 const theme = createMuiTheme({
   palette: {
@@ -39,44 +38,27 @@ const theme = createMuiTheme({
     "fontWeightRegular": 400,
     "fontWeightMedium": 500
    }
-});
+})
 
-const useStyles = makeStyles({
-  display: "flex",
+const useStyles = makeStyles(theme => ({
+  container: {
+    display: "flex",
     flexDirection: "column",
     width: "100%",
-    fontFamily: "Roboto!important",
-    //border: "solid 1px #C4C4C4", OPTIONAL
-    borderRadius: "6px",
-    marginTop: "24px",
-    marginBottom: "24px",
-    paddingBottom: "12px",
-});
+    fontFamily: "Roboto",
+    border: "solid 1px #C4C4C4",
+  }
+}))
 
-function App () {
-  const classes = useStyles();
-  
+const App = () => {
+  const classes = useStyles()
+
   return (
     <>
-    <Head>
-      <title>IMDB Api Project</title>
-      <link
-          rel="preload"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;display=swap"
-          as="font"
-          type="font/woff2"
-      />
-   </Head>
-    <StylesProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Container className={classes.container} fixed>
-          <div className={classes.text}>
-            selammm
-          </div>
-        </Container>
-      </ThemeProvider>
-    </StylesProvider>
+      <CssBaseline />
+      <Container className={classes.container} fixed>
+        <div>does this work?</div>
+      </Container>
     </>
   )
 }
