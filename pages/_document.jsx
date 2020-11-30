@@ -5,16 +5,17 @@ import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles'
 
 const theme = responsiveFontSizes(createMuiTheme())
 
+/*<meta
+name="viewport"
+content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
+/>*/
+
 class MyDocument extends Document {
   render() {
     return (
       <Html>
         <Head>
           <meta charSet="utf-8" />
-          <meta
-            name="viewport"
-            content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
-          />
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="stylesheet"
@@ -39,6 +40,7 @@ class MyDocument extends Document {
               }
             `}
           </style>
+          <link rel="stylesheet" href="/dist/Skeleton.css" />
         </Head>
         <body>
           <Main />

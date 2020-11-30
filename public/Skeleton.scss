@@ -1,0 +1,111 @@
+
+// skeleton loader forked from codepen.io/oslego/pen/XdvWmd
+@keyframes placeHolderShimmer{
+    0% {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        background-position: -468px 0
+    }
+    to {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        background-position: 468px 0
+    } 
+}
+
+@mixin skeleton{
+  will-change: transform;
+  animation: placeHolderShimmer 1s linear infinite forwards;
+  -webkit-backface-visibility: hidden;
+  background: #e6e6e6;
+  background: linear-gradient(90deg, #eee 8%, #ddd 18%, #eee 33%);
+  background-size: 800px 104px;
+}
+
+.card{
+    transition: all .65s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    margin-right: 6px;
+    align-items: stretch;
+    background-color: #ccc;
+    flex-wrap: wrap;
+
+    &__media{
+        &--placeholder{
+            display: flex;
+            height: 258px;
+            width: 184px;
+            background-color: #eee;
+            @include skeleton;
+        }
+        img{
+            height: 258px;
+            width: 184px;
+        }
+    }
+
+    &__title{
+        font-size: 24px;
+        &--placeholder{
+            margin-top: 6px;
+            height: 20px;
+            width: 100%;
+            background-color: #eee;
+            @include skeleton;
+        }
+    }
+
+    &__rating{
+        font-size: 18px;
+        color: #4A4A4A;
+        transition: all .5s ease-in-out;
+        &--placeholder{
+            margin-top: 6px;
+            height: 20px;
+            width: 100%;
+            background-color: #eee;
+            @include skeleton;
+        }
+    }
+}
+
+a{
+    text-decoration: none;
+    .card{
+        &__new{
+            transition: all 500ms cubic-bezier(0.455, 0.030, 0.515, 0.955);
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            margin-right: 6px;
+            align-items: stretch;
+            border: 2px dashed #CCCCCC;
+            flex-wrap: wrap;
+            color: #7E7E7E;
+            &--icon{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 334px;
+                width: 180px;
+                font-size: 2.2em;
+            }
+            &--title{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 20px;
+                width: 100%;
+            }
+            &:hover{
+                transition: all 500ms cubic-bezier(0.455, 0.030, 0.515, 0.955);
+                border: 2px dashed #242424;
+                color: #242424 !important;
+            }
+        }
+    }
+    
+}
