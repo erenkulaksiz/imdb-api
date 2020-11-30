@@ -18,7 +18,5 @@
     "react": "16.13.1",
     "react-dom": "16.13.1"
   },
-  "devDependencies": {
-    "style-loader": "^2.0.0"
-  }
+  "devDependencies": {}
 }
