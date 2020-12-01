@@ -238,7 +238,12 @@ const Element = ({imgSrc, title, rating, duration, imdblink }) => {
 const App = () => {
   const classes = useStyles()
 
+  const [formMovieID, setFormMovieID] = useState(null);
 
+  const handleMovieSubmit = (event) => {
+    event.preventDefault();
+    console.log("form: "+formMovieID);
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -263,16 +268,19 @@ const App = () => {
             </div>
           </div>
           <div className={classes.headerMovieInput}>
-            <TextField
-              label="Add Movie"
-              id="outlined-size-normal"
-              variant="outlined"
-              size="small"
-              placeholder="tt0816692"
-            />
-            <Button variant="contained" color="primary" className={classes.movieInputBtn}>
-            <FontAwesomeIcon icon={faPlus} style={{marginRight: "8px"}}/> Add 
-            </Button>
+            <form onSubmit={handleMovieSubmit}>
+              <TextField
+                label="Add Movie"
+                id="outlined-size-normal"
+                variant="outlined"
+                size="small"
+                placeholder="tt0816692"
+                onChange={event => setFormMovieID(event.target.value)}
+              />
+              <Button type="submit" variant="contained" color="primary" className={classes.movieInputBtn}>
+                <FontAwesomeIcon icon={faPlus} style={{marginRight: "8px"}}/> Add 
+              </Button>
+            </form>
           </div>
           <div className={classes.headerMovieInfo}>
             <div className={classes.infoTitle}>
