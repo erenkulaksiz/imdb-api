@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, forceUpdate } from 'react';
 import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 import { Container, 
   Button, 
   CircularProgress, 
   Backdrop, 
-  Dialog, 
-  DialogActions, 
-  DialogContent, 
-  DialogContentText,
   TextField,
   Link,
   Avatar,
@@ -22,6 +18,11 @@ import { Container,
   ListItem,
   ListItemText,
   ListItemIcon,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@material-ui/core';
 import { Skeleton, Rating } from '@material-ui/lab'
 import axios from 'axios';
@@ -87,9 +88,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: "24px",
     marginBottom: "24px",
   },
-  headerMovieInput: {
-    marginBottom: "24px",
-  },
   movieInputBtn: {
     marginLeft: "8px",
   },
@@ -125,7 +123,7 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flexDirection: "column",
     padding: "12px",
-    marginRight: "12px",
+    margin: "12px",
     minWidth: "192px",
   },
   cardHeader: {
@@ -184,9 +182,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: "18px",
     fontWeight: "500",
   },
-  infoDesc: {
-
-  },
 }))
 
 const SkeletonLoader = () => {
@@ -228,7 +223,7 @@ const Element = ({imgSrc, title, rating, duration, imdblink }) => {
           <Chip label={duration} className={classes.cardChipTime} />
         </div>
         <div className={classes.cardLinkRight}>
-          <Button color="primary">IMDB<FontAwesomeIcon icon={faArrowRight} style={{marginLeft: "8px"}}/></Button>
+          <Button color="primary" target="_blank" href={"https://www.imdb.com/title/"+imdblink}>IMDB<FontAwesomeIcon icon={faArrowRight} style={{marginLeft: "8px"}}/></Button>
         </div>
       </div>
     </Card>
@@ -239,11 +234,78 @@ const App = () => {
   const classes = useStyles()
 
   const [formMovieID, setFormMovieID] = useState(null);
+  const [movieList, setMovieList] = useState(["tt4574334", "tt5290382", "tt0371746"]);
+  const [movieData, setMovieData] = useState(null);
+  const [isLoaded, setLoaded] = useState(false);
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+
+  let currResponse = {};
 
   const handleMovieSubmit = (event) => {
     event.preventDefault();
     console.log("form: "+formMovieID);
+    if(!formMovieID || formMovieID == ""){
+      setDialogOpen(true);
+      return;
+    }
+    let list = movieList;
+    list.push(formMovieID);
+    setMovieList(list);
+    handleRefresh();
   }
+
+  const fetchData = (movieID) => {
+    return new Promise(resolve => {
+      axios({
+        "method":"GET",
+        "url":"https://imdb-internet-movie-database-unofficial.p.rapidapi.com/film/"+movieID,
+        "headers":{
+          "content-type":"application/octet-stream",
+          "x-rapidapi-host":"imdb-internet-movie-database-unofficial.p.rapidapi.com",
+          "x-rapidapi-key":"2ffec75a0cmsh6d416e1011b4ac0p103487jsn3c217ec29241",
+          "useQueryString":true
+        }
+        })
+        .then((response)=>{
+          console.log(response)
+          if(response.status == '200'){
+            currResponse = response;
+            resolve(true);
+          }
+        })
+        .catch((error)=>{
+          console.log(error)
+        })
+    });
+  }
+
+  const handleRefresh = async () => {
+    let movieListData = [];
+    setLoaded(false);
+    for(let element of movieList){
+      await fetchData(element);
+      movieListData.push(currResponse);
+    }
+    setMovieData(movieListData);
+    setLoaded(true);
+  }
+
+  const handleMovieRemove = (event, index) => {
+    movieList.splice(index, 1);
+    handleRefresh();
+  }
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  useEffect(() => {
+    handleRefresh();
+  }, [])
 
   return (
     <ThemeProvider theme={theme}>
@@ -258,35 +320,21 @@ const App = () => {
               This script uses Axios to fetch data, React & MUI to display it.
             </div>
             <div className={classes.headerInputs}>
-              <Button variant="contained" color="primary">
-              <FontAwesomeIcon icon={faSyncAlt} style={{marginRight: "8px"}}/> Refresh 
+              <Button variant="contained" color="primary" onClick={handleRefresh}>
+                <FontAwesomeIcon icon={faSyncAlt} style={{marginRight: "8px"}}/> Refresh 
               </Button>
               <div className={classes.headerDataChips}>
-                <Chip label="Film Count: 24" className={classes.headerDataChip} />
-                <Chip label="Success Fetch: 24" className={classes.headerDataChip} />
+                <Chip label={"Film Count: "+(movieList.length)} className={classes.headerDataChip} />
               </div>
             </div>
-          </div>
-          <div className={classes.headerMovieInput}>
-            <form onSubmit={handleMovieSubmit}>
-              <TextField
-                label="Add Movie"
-                id="outlined-size-normal"
-                variant="outlined"
-                size="small"
-                placeholder="tt0816692"
-                onChange={event => setFormMovieID(event.target.value)}
-              />
-              <Button type="submit" variant="contained" color="primary" className={classes.movieInputBtn}>
-                <FontAwesomeIcon icon={faPlus} style={{marginRight: "8px"}}/> Add 
-              </Button>
-            </form>
           </div>
           <div className={classes.headerMovieInfo}>
             <div className={classes.infoTitle}>
               How to add a movie?
             </div>
             <div className={classes.infoDesc}>
+              Enter a film name to add movie form or enter an id of the film.
+              <br/>
               You can go to <Link href="http://www.imdb.com" target="_blank">IMDB.COM</Link> then find a movie, you can find movie id from the url in movie. Example, https://www.imdb.com/title/tt0816692/ this movie's id is tt0816692 
             </div>
           </div>
@@ -294,30 +342,67 @@ const App = () => {
             <div className={classes.headerMovieListTitle}>
               Movies list
             </div>
-            <List component="nav">
-              <ListItem button>
-                <ListItemText> tt0816692  </ListItemText> 
-                <Button variant="contained" color="secondary" className={classes.movieInputBtn}>
+            <List>
+              
+              {movieList.map((movieID, index) => (<React.Fragment>
+                <ListItem button>
+                <ListItemText><strong>{isLoaded ? movieData[index].data.title : movieID}</strong></ListItemText> 
+                <Button variant="contained" color="secondary" className={classes.movieInputBtn} onClick={e => handleMovieRemove(e, index)}>
                   <FontAwesomeIcon icon={faMinus} style={{marginRight: "8px"}}/> Remove 
                 </Button>
+                </ListItem>
+              </React.Fragment>))}
+
+              <ListItem button> 
+                <form onSubmit={handleMovieSubmit}>
+                  <TextField
+                    label="Add Movie"
+                    id="outlined-size-normal"
+                    variant="outlined"
+                    size="small"
+                    placeholder="e.g. Gravity"
+                    onChange={event => setFormMovieID(event.target.value)}
+                  />
+                  <Button type="submit" variant="contained" color="primary" className={classes.movieInputBtn}>
+                    <FontAwesomeIcon icon={faPlus} style={{marginRight: "8px"}}/> Add 
+                  </Button>
+                </form>
               </ListItem>
             </List>
           </div>
           <Divider/>
           <div className={classes.program}>
 
-            <Element 
-              imgSrc='https://m.media-amazon.com/images/M/MV5BZGExYjQzNTQtNGNhMi00YmY1LTlhY2MtMTRjODg3MjU4YTAyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@.jpg'
-              title='Stranger Things'
-              rating={4.4}
-              duration="51 min"
-              imdblink="https://"
-            />
-            
-            <SkeletonLoader />
+            {isLoaded ? movieData.map((movie) => (<Element 
+              imgSrc={movie.data.poster}
+              title={movie.data.title}
+              rating={movie.data.rating}
+              duration={movie.data.length}
+              imdblink={movie.data.id}
+            />)) : movieList.map((movie) => (<SkeletonLoader />))}
 
           </div>
         </div>
+
+        <Dialog
+          open={dialogOpen}
+          onClose={handleDialogClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Error"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Please enter a valid movie name or id.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary" autoFocus>
+              Okay
+            </Button>
+          </DialogActions>
+        </Dialog>
+
       </Container>
     </ThemeProvider>
   )
