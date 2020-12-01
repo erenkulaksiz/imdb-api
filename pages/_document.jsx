@@ -40,7 +40,6 @@ class MyDocument extends Document {
               }
             `}
           </style>
-          <link rel="stylesheet" href="/dist/Skeleton.css" />
         </Head>
         <body>
           <Main />

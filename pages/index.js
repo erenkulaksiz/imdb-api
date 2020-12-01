@@ -15,11 +15,14 @@ import { Container,
   Divider,
   Paper,
   colors,
-  CssBaseline
+  CssBaseline,
+  Card,
+  Box,
 } from '@material-ui/core';
+import { Skeleton, Rating } from '@material-ui/lab'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 const theme = createMuiTheme({
   palette: {
@@ -90,8 +93,113 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     width: "100%",
     marginTop: "24px",
+    flexWrap: "wrap",
   },
+  mediaCard: {
+    display: "flex",
+    flexDirection: "column",
+    padding: "12px",
+    marginRight: "12px",
+    minWidth: "192px",
+  },
+  cardHeader: {
+    display: "flex", // Title çok büyükse ortala.
+    justifyContent: "center",
+    alignItems: "center", 
+  },
+  cardMedia: {
+    height: "258px",
+    width: "184px",
+  },
+  cardTitle: {
+    fontSize: "24px",
+    fontWeight: "500",
+    marginTop: "8px",
+  },
+  cardRating: {
+    display: "flex",
+    alignItems: "center",
+    marginTop: "8px",
+    fontSize: "18px",
+    fontWeight: "500",
+    width: "100%",
+  },
+  cardRatingSkeleton: {
+    marginTop: "12px",
+    width: "100%",
+  },
+  cardChip: {
+    marginLeft: "6px",
+    fontSize: "16px",
+    fontWeight: "650",
+  },
+  cardChipTime: {
+    fontSize: "12px",
+  },
+  cardLink: {
+    display: "flex",
+    marginTop: "8px",
+    width: "100%",
+  },
+  cardLinkSkeleton: {
+    width: "100%",
+  },
+  cardLinkLeft: {
+    display: "flex",
+    flex: "50%",
+  },
+  cardLinkRight: {
+    display: "flex",
+    flex: "50%",
+    justifyContent: "flex-end",
+  }
 }))
+
+const SkeletonLoader = () => {
+  const classes = useStyles()
+  return (
+    <Card className={classes.mediaCard}>
+      <div className={classes.cardHeader}>
+        <Skeleton variant="rect" width={184} height={258} animation="wave"/>
+      </div>
+      <div className={classes.cardTitle}>
+        <Skeleton variant="text" animation="wave"/>
+      </div>
+      <div className={classes.cardRatingSkeleton}>
+        <Skeleton variant="text" animation="wave"/>
+      </div>
+      <div className={classes.cardLinkSkeleton}>
+        <Skeleton variant="text" animation="wave"/>
+      </div>
+    </Card>
+  );
+}
+
+const Element = ({imgSrc, title, rating, duration, imdblink }) => {
+  const classes = useStyles()
+  return (
+    <Card className={classes.mediaCard}>
+      <div className={classes.cardHeader}>
+        <img src={imgSrc} className={classes.cardMedia}/>
+      </div>
+      <div className={classes.cardTitle}>
+        {title}
+      </div>
+      <div className={classes.cardRating}>
+        <Rating name="read-only" value={rating} readOnly />
+        <Chip label={rating} className={classes.cardChip} />
+      </div>
+      <div className={classes.cardLink}>
+        <div className={classes.cardLinkLeft}>
+          <Chip label={duration} className={classes.cardChipTime} />
+        </div>
+        <div className={classes.cardLinkRight}>
+          <Button color="primary">IMDB<FontAwesomeIcon icon={faArrowRight} /></Button>
+        </div>
+      </div>
+    </Card>
+  );
+}
 
 const App = () => {
   const classes = useStyles()
@@ -120,30 +228,17 @@ const App = () => {
           </div>
           <Divider/>
           <div className={classes.program}>
-          
-            <div className='card'>
-              <div className='card__media'>
-                <div className='card__media--placeholder'></div>
-              </div>
-              <div className='card__title'>
-                <div className='card__title--placeholder'></div>
-              </div>
-              <div className='card__rating'>
-                <div className='card__title--placeholder'></div>
-              </div>
-            </div>
 
-            <a href='#' onClick={() => {alert("onclick test")}}>
-              <div className='card__new'>
-                <div className='card__new--icon'>
-                  <FontAwesomeIcon icon={faPlus} />
-                  <div className='card__new--title'>
-                    Add New Movie
-                  </div>
-                </div>
-              </div>
-            </a>
+            <Element 
+              imgSrc='https://m.media-amazon.com/images/M/MV5BZGExYjQzNTQtNGNhMi00YmY1LTlhY2MtMTRjODg3MjU4YTAyXkEyXkFqcGdeQXVyMTkxNjUyNQ@@.jpg'
+              title='Stranger Things'
+              rating={4.4}
+              duration="51 min"
+              imdblink="https://"
+            />
             
+            <SkeletonLoader />
+
 
           </div>
         </div>
