@@ -24,10 +24,10 @@ import { Container,
   DialogContentText,
   DialogTitle,
 } from '@material-ui/core';
-import { Skeleton, Rating } from '@material-ui/lab'
+import { Skeleton, Rating } from '@material-ui/lab';
 import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faMinus, faArrowRight, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPlus, faMinus, faArrowRight, faSyncAlt } from '@fortawesome/free-solid-svg-icons';
 
 const theme = createMuiTheme({
   palette: {
@@ -50,8 +50,9 @@ const theme = createMuiTheme({
    }
 })
 
-const useStyles = makeStyles(theme => ({
-  container: {
+const useStyles = makeStyles(theme => (
+  {
+    container: {
     display: "flex",
     flexDirection: "column",
     width: "100%",
