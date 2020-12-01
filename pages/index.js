@@ -17,20 +17,24 @@ import { Container,
   colors,
   CssBaseline,
   Card,
-  Box,
+  ThemeProvider,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
 } from '@material-ui/core';
 import { Skeleton, Rating } from '@material-ui/lab'
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faMinus, faArrowRight, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: "#42BBBD"
+      main: "#0486FF"
     },
     secondary: {
-      main: "#19857b"
+      main: "#BB0000"
     },
     error: {
       main: colors.red.A400
@@ -51,6 +55,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: "column",
     width: "100%",
     fontFamily: "Roboto",
+    marginBottom: "24px",
   },
   wrapper: {
     display: "flex",
@@ -82,12 +87,33 @@ const useStyles = makeStyles(theme => ({
     marginTop: "24px",
     marginBottom: "24px",
   },
+  headerMovieInput: {
+    marginBottom: "24px",
+  },
+  movieInputBtn: {
+    marginLeft: "8px",
+  },
   headerDataChips: {
     display: "flex",
     width: "100%",
   },
   headerDataChip: {
     marginLeft: "6px",
+  },
+  headerMovieInfo: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: "24px",
+  },
+  headerMovieList: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: "24px",
+    width: "100%",
+  },
+  headerMovieListTitle: {
+    fontSize: "18px",
+    fontWeight: "500",
   },
   program: {
     display: "flex",
@@ -152,7 +178,15 @@ const useStyles = makeStyles(theme => ({
     display: "flex",
     flex: "50%",
     justifyContent: "flex-end",
-  }
+  },
+  infoTitle: {
+    width: "100%",
+    fontSize: "18px",
+    fontWeight: "500",
+  },
+  infoDesc: {
+
+  },
 }))
 
 const SkeletonLoader = () => {
@@ -194,7 +228,7 @@ const Element = ({imgSrc, title, rating, duration, imdblink }) => {
           <Chip label={duration} className={classes.cardChipTime} />
         </div>
         <div className={classes.cardLinkRight}>
-          <Button color="primary">IMDB<FontAwesomeIcon icon={faArrowRight} /></Button>
+          <Button color="primary">IMDB<FontAwesomeIcon icon={faArrowRight} style={{marginLeft: "8px"}}/></Button>
         </div>
       </div>
     </Card>
@@ -204,8 +238,10 @@ const Element = ({imgSrc, title, rating, duration, imdblink }) => {
 const App = () => {
   const classes = useStyles()
 
+
+
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <Container className={classes.container} fixed>
         <div className={classes.wrapper}>
@@ -214,17 +250,50 @@ const App = () => {
               IMDB API Project
             </div>
             <div className={classes.headerDesc}>
-              This script uses IMDB API to fetch data and display it.
+              This script uses Axios to fetch data, React & MUI to display it.
             </div>
             <div className={classes.headerInputs}>
               <Button variant="contained" color="primary">
-                Reload
+              <FontAwesomeIcon icon={faSyncAlt} style={{marginRight: "8px"}}/> Refresh 
               </Button>
               <div className={classes.headerDataChips}>
                 <Chip label="Film Count: 24" className={classes.headerDataChip} />
                 <Chip label="Success Fetch: 24" className={classes.headerDataChip} />
               </div>
             </div>
+          </div>
+          <div className={classes.headerMovieInput}>
+            <TextField
+              label="Add Movie"
+              id="outlined-size-normal"
+              variant="outlined"
+              size="small"
+              placeholder="tt0816692"
+            />
+            <Button variant="contained" color="primary" className={classes.movieInputBtn}>
+            <FontAwesomeIcon icon={faPlus} style={{marginRight: "8px"}}/> Add 
+            </Button>
+          </div>
+          <div className={classes.headerMovieInfo}>
+            <div className={classes.infoTitle}>
+              How to add a movie?
+            </div>
+            <div className={classes.infoDesc}>
+              You can go to <Link href="http://www.imdb.com" target="_blank">IMDB.COM</Link> then find a movie, you can find movie id from the url in movie. Example, https://www.imdb.com/title/tt0816692/ this movie's id is tt0816692 
+            </div>
+          </div>
+          <div className={classes.headerMovieList}>
+            <div className={classes.headerMovieListTitle}>
+              Movies list
+            </div>
+            <List component="nav">
+              <ListItem button>
+                <ListItemText> tt0816692  </ListItemText> 
+                <Button variant="contained" color="secondary" className={classes.movieInputBtn}>
+                  <FontAwesomeIcon icon={faMinus} style={{marginRight: "8px"}}/> Remove 
+                </Button>
+              </ListItem>
+            </List>
           </div>
           <Divider/>
           <div className={classes.program}>
@@ -239,11 +308,10 @@ const App = () => {
             
             <SkeletonLoader />
 
-
           </div>
         </div>
       </Container>
-    </>
+    </ThemeProvider>
   )
 }
 
